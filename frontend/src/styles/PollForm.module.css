@@ -1,0 +1,436 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 800px;
+  gap: 20px;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.btnBack {
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: var(--transition);
+  align-self: flex-start;
+  box-shadow: var(--shadow-sm);
+}
+
+.btnBack:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btnBack:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.formCard {
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  gap: 24px;
+}
+
+.formCard h2 {
+  margin: 0;
+  font-size: 28px;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.error {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #7f1d1d;
+  padding: 14px 20px;
+  border-radius: 8px;
+  border: 1px solid #fca5a5;
+  margin: 0;
+  font-weight: 600;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.formGroup label {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 14px;
+  letter-spacing: 0.3px;
+}
+
+.formGroup input {
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  transition: var(--transition);
+  background-color: var(--surface);
+}
+
+.formGroup input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.formGroup input:disabled {
+  background-color: #f8fafc;
+  cursor: not-allowed;
+  opacity: 0.6;
+  color: var(--text-secondary);
+}
+
+.datesContainer {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
+
+.datesContainer .formGroup {
+  flex: 1;
+}
+
+.optionsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 16px;
+  border-top: 2px solid var(--border);
+}
+
+.optionsHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.optionsHeader h3 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--text-primary);
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.hint {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.optionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.optionInputGroup {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  transition: var(--transition);
+  cursor: grab;
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+}
+
+.optionInputGroup:hover {
+  background-color: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.05) 0%,
+    rgba(139, 92, 246, 0.05) 100%
+  );
+  border-color: var(--primary);
+}
+
+.optionInputGroup.dragging {
+  opacity: 0.7;
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.15) 0%,
+    rgba(139, 92, 246, 0.15) 100%
+  );
+  border: 2px solid var(--primary);
+  cursor: grabbing;
+}
+
+.dragHandle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: bold;
+  cursor: grab;
+  user-select: none;
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.dragHandle:active {
+  cursor: grabbing;
+  color: var(--primary);
+}
+
+.optionInputGroup input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 14px;
+  transition: var(--transition);
+  background-color: var(--surface);
+}
+
+.optionInputGroup input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.optionInputGroup input:disabled {
+  background-color: #f8fafc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btnRemoveOption {
+  padding: 8px 14px;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: var(--transition);
+  min-width: 45px;
+  box-shadow: var(--shadow-sm);
+}
+
+.btnRemoveOption:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btnRemoveOption:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btnAddOption {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: var(--transition);
+  align-self: flex-start;
+  box-shadow: var(--shadow-sm);
+}
+
+.btnAddOption:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btnAddOption:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.formActions {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 2px solid var(--border);
+  justify-content: flex-end;
+}
+
+.btnCancel {
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: var(--transition);
+  min-width: 120px;
+  box-shadow: var(--shadow-sm);
+}
+
+.btnCancel:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btnCancel:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btnSubmit {
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: var(--transition);
+  min-width: 120px;
+  box-shadow: var(--shadow-sm);
+}
+
+.btnSubmit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btnSubmit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .container {
+    gap: 16px;
+  }
+
+  .formCard {
+    padding: 20px;
+    gap: 16px;
+  }
+
+  .formCard h2 {
+    font-size: 24px;
+  }
+
+  .datesContainer {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .optionInputGroup {
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .dragHandle {
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+  }
+
+  .formActions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btnCancel,
+  .btnSubmit {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    gap: 12px;
+  }
+
+  .formCard {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .formCard h2 {
+    font-size: 20px;
+  }
+
+  .formGroup label {
+    font-size: 13px;
+  }
+
+  .optionInputGroup {
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .dragHandle {
+    width: 18px;
+    height: 18px;
+    font-size: 8px;
+  }
+
+  .formGroup input {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+
+  .optionInputGroup input {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .btnRemoveOption {
+    padding: 6px 10px;
+    font-size: 12px;
+    min-width: 35px;
+  }
+
+  .btnAddOption {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .formActions {
+    gap: 8px;
+    flex-direction: column;
+  }
+
+  .btnCancel,
+  .btnSubmit {
+    padding: 10px 16px;
+    font-size: 13px;
+    width: 100%;
+  }
+}
