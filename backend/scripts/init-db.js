@@ -24,7 +24,7 @@ async function initializeDatabase() {
       password: process.env.DB_PASSWORD || "",
     });
 
-    const dbName = process.env.DB_NAME || "sistema_votacao";
+    const dbName = process.env.DB_NAME || "voting_system";
 
     try {
       await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\``);
