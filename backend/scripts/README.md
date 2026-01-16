@@ -176,8 +176,8 @@ Os scripts usam as variáveis do arquivo `.env`:
 ```env
 DB_HOST=localhost
 DB_USER=root
-DB_PASSWORD=sua_senha_aqui
-DB_NAME=sistema_votacao
+DB_PASS=sua_senha_aqui
+DB_NAME=voting_system
 DB_PORT=3306
 
 PORT=5000

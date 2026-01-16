@@ -28,8 +28,8 @@ npm install
 # Crie o arquivo .env com:
 DB_HOST=localhost
 DB_USER=root
-DB_PASSWORD=sua_senha_aqui
-DB_NAME=sistema_votacao
+DB_PASS=sua_senha_aqui
+DB_NAME=voting_system
 DB_PORT=3306
 PORT=5000
 ```
@@ -98,7 +98,7 @@ npm run seed:db     # Popula com dados de teste
 
 ```
 1. Conecta ao MySQL
-2. Cria banco 'sistema_votacao' (se não existir)
+2. Cria banco 'voting_system' (se não existir)
 3. Define relações entre tabelas
 4. Cria as tabelas:
    - polls (enquetes)
@@ -120,7 +120,7 @@ $ npm run init:db
 🔧 Iniciando preparação do banco de dados...
 
 📦 Criando banco de dados...
-✓ Banco de dados 'sistema_votacao' criado/verificado com sucesso
+✓ Banco de dados 'voting_system' criado/verificado com sucesso
 
 🔗 Conectando ao banco de dados...
 ✓ Conexão com MySQL estabelecida com sucesso
@@ -349,7 +349,7 @@ mysql -u root -p # macOS/Linux
 
 ```bash
 # Verifique arquivo .env
-# Corrija DB_PASSWORD e tente novamente
+# Corrija DB_PASS e tente novamente
 npm run init:db
 ```
 
@@ -378,7 +378,7 @@ cat package.json | grep "npm run"
 
 ```sql
 -- Banco de dados
-DATABASE: sistema_votacao
+DATABASE: voting_system
 
 -- Tabelas criadas
 TABLE: polls (enquetes)

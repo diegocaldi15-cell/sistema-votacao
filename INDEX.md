@@ -52,8 +52,18 @@ Você vai:
 | Arquivo                                                  | Para Quem                 | Tempo  |
 | -------------------------------------------------------- | ------------------------- | ------ |
 | [README.md](./README.md)                                 | Quem quer visão geral     | 20 min |
+| [README.md - Exemplos de Requisições](./README.md#-exemplos-de-requisições) | Quem quer testar a API | 10 min |
 | [backend/scripts/README.md](./backend/scripts/README.md) | Quem quer usar scripts    | 15 min |
 | [backend/scripts/GUIDE.md](./backend/scripts/GUIDE.md)   | Quem quer dominar scripts | 1 hora |
+
+---
+
+## 📌 Seções Principais do README.md
+
+1. **[🔌 API Endpoints](./README.md#-api-endpoints)** - Lista completa de endpoints
+2. **[📋 Exemplos de Requisições](./README.md#-exemplos-de-requisições)** - Como usar GET, POST, DELETE
+3. **[✅ Validações Obrigatórias](./README.md#-validações-obrigatórias)** - Regras de validação
+4. **[🔴 Códigos de Resposta HTTP](./README.md#-códigos-de-resposta-http)** - Status codes esperados
 
 ---
 
@@ -86,6 +96,11 @@ Você vai:
 
 👉 [QUICK-START.md](./QUICK-START.md) - Seção "Quick Start"
 
+### "Como testar a API?"
+
+👉 [README.md - Exemplos de Requisições](./README.md#-exemplos-de-requisições) - Exemplos curl/JavaScript  
+👉 [SETUP.md - Testes Rápidos da API](./SETUP.md#-testes-rápidos-da-api) - Comandos para testar
+
 ### "Qual porta o servidor usa?"
 
 👉 [README.md](./README.md) - Seção "Quick Start" ou [SETUP.md](./SETUP.md)
@@ -98,6 +113,10 @@ Você vai:
 ### "Como mudar dados de teste?"
 
 👉 [backend/scripts/GUIDE.md](./backend/scripts/GUIDE.md) - Seção "Customização"
+
+### "Quais são os códigos de erro da API?"
+
+👉 [README.md - Códigos de Resposta HTTP](./README.md#-códigos-de-resposta-http) - Tabela completa
 
 ### "Qual é a estrutura de arquivos?"
 

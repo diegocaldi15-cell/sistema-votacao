@@ -12,7 +12,7 @@ npm install
 # 3. Configure .env (crie o arquivo com suas credenciais MySQL e Porta do Backend)
 DB_HOST=localhost
 DB_USER=root
-DB_PASSWORD=sua_senha_aqui
+DB_PASS=sua_senha_aqui
 DB_NAME=voting_system
 DB_PORT=3306
 
@@ -124,6 +124,15 @@ Se der problema:
 
 ---
 
+## 📚 Documentação Relacionada
+
+- **[README.md](./README.md)** - Documentação completa com exemplos de API
+- **[SETUP.md](./SETUP.md)** - Instruções passo-a-passo
+- **[Exemplos de Requisições](./README.md#-exemplos-de-requisições)** - Como usar GET, POST, DELETE
+- **[Códigos HTTP](./README.md#-códigos-de-resposta-http)** - Status de resposta
+
+---
+
 ## 🚀 Próximos Passos
 
 1. **Ler SETUP.md** - Para instrições detalhadas
@@ -132,3 +141,4 @@ Se der problema:
 4. **Iniciar `npm run dev` (frontend)** - Para interface
 5. **Abrir navegador** - http://localhost:5173
 6. **Explorar a aplicação** - Testar criar, votar, editar
+7. **Testar API** - Ver [Exemplos de Requisições](./README.md#-exemplos-de-requisições)

@@ -68,7 +68,7 @@ Adicione o seguinte conteúdo (adapte as credenciais):
 # Configurações do MySQL
 DB_HOST=localhost
 DB_USER=root
-DB_PASSWORD=sua_senha_aqui
+DB_PASS=sua_senha_aqui
 DB_NAME=voting_system
 DB_PORT=3306
 
@@ -79,7 +79,7 @@ PORT=5000
 **⚠️ Importante:**
 
 - Substitua `sua_senha_aqui` pela senha do seu MySQL
-- Se não configurou senha, deixe em branco: `DB_PASSWORD=`
+- Se não configurou senha, deixe em branco: `DB_PASS=`
 - Se MySQL está em outra máquina, altere `DB_HOST`
 - Se achar necessário altere o `DB_PORT`
 
@@ -259,7 +259,7 @@ sudo systemctl start mysql
 **Solução:**
 
 1. Abra o arquivo `.env`
-2. Atualize `DB_PASSWORD` com a senha correta
+2. Atualize `DB_PASS` com a senha correta
 3. Execute `npm run init:db` novamente
 
 ### Erro: "Port 5000 is already in use"
@@ -406,3 +406,50 @@ Se encontrar problemas:
 2. **Leia os logs** do terminal onde rodou `npm start`
 3. **Consulte troubleshooting** acima
 4. **Verifique o README.md** para mais informações
+
+---
+
+## 🧪 Testes Rápidos da API
+
+Após iniciar o servidor, você pode testar os endpoints:
+
+### Testar GET /api/polls
+
+```bash
+curl -X GET http://localhost:5000/api/polls
+```
+
+Ou no navegador: `http://localhost:5000/api/polls`
+
+### Testar POST /api/polls
+
+```bash
+curl -X POST http://localhost:5000/api/polls \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Test Poll",
+    "startDate": "2026-01-17T10:00:00Z",
+    "endDate": "2026-01-24T10:00:00Z",
+    "options": ["Option 1", "Option 2", "Option 3"]
+  }'
+```
+
+### Obter ID de uma Enquete
+
+```bash
+curl -X GET http://localhost:5000/api/polls | jq '.[0].id'
+```
+
+### Testar GET /api/polls/:id (substituir 1 pelo ID real)
+
+```bash
+curl -X GET http://localhost:5000/api/polls/1
+```
+
+### Testar DELETE /api/polls/:id (substituir 1 pelo ID real)
+
+```bash
+curl -X DELETE http://localhost:5000/api/polls/1
+```
+
+**Nota:** Para exemplos mais completos, veja [README.md - Exemplos de Requisições](./README.md#-exemplos-de-requisições)

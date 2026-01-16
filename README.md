@@ -59,7 +59,7 @@ npm install
 # 2. Configurar .env com credenciais MySQL
 # DB_HOST=localhost
 # DB_USER=root
-# DB_PASSWORD=sua_senha
+# DB_PASS=sua_senha
 # DB_NAME=voting_system
 # DB_PORT=3306
 # PORT=5000
@@ -163,6 +163,299 @@ root/
 | ------ | ------------------------ | --------------------------- |
 | POST   | `/api/polls/:id/vote`    | Votar em uma opção          |
 | GET    | `/api/polls/:id/results` | Obter resultados da enquete |
+
+---
+
+## 📋 Exemplos de Requisições
+
+### GET /api/polls - Listar todas as enquetes
+
+**Requisição:**
+```bash
+curl -X GET http://localhost:5000/api/polls
+```
+
+**Resposta (200 OK):**
+```json
+[
+  {
+    "id": 1,
+    "title": "Qual é sua linguagem de programação favorita?",
+    "description": null,
+    "startDate": "2026-01-15T12:00:00.000Z",
+    "endDate": "2026-01-22T12:00:00.000Z",
+    "createdAt": "2026-01-16T10:30:00.000Z",
+    "updatedAt": "2026-01-16T10:30:00.000Z",
+    "Options": [
+      {
+        "id": 1,
+        "text": "JavaScript / TypeScript",
+        "PollId": 1,
+        "createdAt": "2026-01-16T10:30:00.000Z",
+        "updatedAt": "2026-01-16T10:30:00.000Z"
+      },
+      {
+        "id": 2,
+        "text": "Python",
+        "PollId": 1,
+        "createdAt": "2026-01-16T10:30:00.000Z",
+        "updatedAt": "2026-01-16T10:30:00.000Z"
+      }
+    ]
+  }
+]
+```
+
+---
+
+### POST /api/polls - Criar nova enquete
+
+**Requisição:**
+```bash
+curl -X POST http://localhost:5000/api/polls \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Qual é sua linguagem favorita?",
+    "startDate": "2026-01-17T10:00:00Z",
+    "endDate": "2026-01-24T10:00:00Z",
+    "options": [
+      "JavaScript",
+      "Python",
+      "Java"
+    ]
+  }'
+```
+
+**Requisição em JavaScript (Fetch):**
+```javascript
+const response = await fetch('http://localhost:5000/api/polls', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    title: 'Qual é sua linguagem favorita?',
+    startDate: '2026-01-17T10:00:00Z',
+    endDate: '2026-01-24T10:00:00Z',
+    options: ['JavaScript', 'Python', 'Java']
+  })
+});
+const data = await response.json();
+```
+
+**Resposta (201 Created):**
+```json
+{
+  "message": "Enquete criada com sucesso",
+  "poll": {
+    "id": 4,
+    "title": "Qual é sua linguagem favorita?",
+    "description": null,
+    "startDate": "2026-01-17T10:00:00.000Z",
+    "endDate": "2026-01-24T10:00:00.000Z",
+    "createdAt": "2026-01-16T11:45:00.000Z",
+    "updatedAt": "2026-01-16T11:45:00.000Z",
+    "Options": [
+      {
+        "id": 10,
+        "text": "JavaScript",
+        "PollId": 4,
+        "createdAt": "2026-01-16T11:45:00.000Z",
+        "updatedAt": "2026-01-16T11:45:00.000Z"
+      },
+      {
+        "id": 11,
+        "text": "Python",
+        "PollId": 4,
+        "createdAt": "2026-01-16T11:45:00.000Z",
+        "updatedAt": "2026-01-16T11:45:00.000Z"
+      },
+      {
+        "id": 12,
+        "text": "Java",
+        "PollId": 4,
+        "createdAt": "2026-01-16T11:45:00.000Z",
+        "updatedAt": "2026-01-16T11:45:00.000Z"
+      }
+    ]
+  }
+}
+```
+
+---
+
+### GET /api/polls/:id - Obter detalhes de uma enquete
+
+**Requisição:**
+```bash
+curl -X GET http://localhost:5000/api/polls/1
+```
+
+**Resposta (200 OK):**
+```json
+{
+  "id": 1,
+  "title": "Qual é sua linguagem de programação favorita?",
+  "description": null,
+  "startDate": "2026-01-15T12:00:00.000Z",
+  "endDate": "2026-01-22T12:00:00.000Z",
+  "createdAt": "2026-01-16T10:30:00.000Z",
+  "updatedAt": "2026-01-16T10:30:00.000Z",
+  "Options": [
+    {
+      "id": 1,
+      "text": "JavaScript / TypeScript",
+      "PollId": 1,
+      "createdAt": "2026-01-16T10:30:00.000Z",
+      "updatedAt": "2026-01-16T10:30:00.000Z"
+    }
+  ]
+}
+```
+
+---
+
+### DELETE /api/polls/:id - Deletar uma enquete
+
+**Requisição:**
+```bash
+curl -X DELETE http://localhost:5000/api/polls/4
+```
+
+**Resposta (200 OK):**
+```json
+{
+  "message": "Enquete deletada com sucesso"
+}
+```
+
+---
+
+### POST /api/polls/:id/vote - Votar em uma opção
+
+**Requisição:**
+```bash
+curl -X POST http://localhost:5000/api/polls/1/vote \
+  -H "Content-Type: application/json" \
+  -d '{
+    "optionId": 1
+  }'
+```
+
+**Resposta (201 Created):**
+```json
+{
+  "message": "Voto registrado com sucesso",
+  "vote": {
+    "id": 25,
+    "OptionId": 1,
+    "createdAt": "2026-01-16T11:50:00.000Z",
+    "updatedAt": "2026-01-16T11:50:00.000Z"
+  }
+}
+```
+
+---
+
+### GET /api/polls/:id/results - Obter resultados da enquete
+
+**Requisição:**
+```bash
+curl -X GET http://localhost:5000/api/polls/1/results
+```
+
+**Resposta (200 OK):**
+```json
+{
+  "poll": {
+    "id": 1,
+    "title": "Qual é sua linguagem de programação favorita?",
+    "description": null,
+    "startDate": "2026-01-15T12:00:00.000Z",
+    "endDate": "2026-01-22T12:00:00.000Z",
+    "createdAt": "2026-01-16T10:30:00.000Z",
+    "updatedAt": "2026-01-16T10:30:00.000Z",
+    "Options": [...]
+  },
+  "results": {
+    "1": {
+      "text": "JavaScript / TypeScript",
+      "votes": 5
+    },
+    "2": {
+      "text": "Python",
+      "votes": 3
+    },
+    "3": {
+      "text": "Java",
+      "votes": 2
+    }
+  }
+}
+```
+
+---
+
+## ✅ Validações Obrigatórias
+
+### POST /api/polls - Criar Enquete
+
+| Campo | Tipo | Obrigatório | Regras |
+|-------|------|-------------|--------|
+| `title` | String | ✅ Sim | Não pode estar vazio |
+| `startDate` | ISO 8601 | ✅ Sim | Deve ser válido |
+| `endDate` | ISO 8601 | ✅ Sim | Deve ser posterior a `startDate` |
+| `options` | Array | ✅ Sim | Mínimo 3 opções, cada uma é string |
+
+**Erros Possíveis:**
+
+```json
+{
+  "message": "Título, datas e mínimo 3 opções são obrigatórios"
+}
+```
+
+```json
+{
+  "message": "Data de início deve ser anterior à de término"
+}
+```
+
+### POST /api/polls/:id/vote - Votar
+
+| Campo | Tipo | Obrigatório | Regras |
+|-------|------|-------------|--------|
+| `optionId` | Integer | ✅ Sim | Deve existir e pertencer à enquete |
+
+**Erros Possíveis:**
+
+```json
+{
+  "message": "OptionId é obrigatório"
+}
+```
+
+```json
+{
+  "message": "Enquete não está ativa"
+}
+```
+
+```json
+{
+  "message": "Opção não encontrada ou não pertence a esta enquete"
+}
+```
+
+---
+
+## 🔴 Códigos de Resposta HTTP
+
+| Código | Significado | Quando Ocorre |
+|--------|------------|---------------|
+| 200 | OK | GET, PUT e DELETE bem-sucedidos |
+| 201 | Created | POST bem-sucedido (recurso criado) |
+| 400 | Bad Request | Validação falhou (campos inválidos, datas erradas) |
+| 404 | Not Found | Enquete ou opção não existe |
+| 500 | Server Error | Erro interno do servidor |
 
 ---
 
