@@ -98,16 +98,40 @@ module.exports = function setupPollRoutes(app, io) {
           .json({ message: "Data de início deve ser anterior à de término" });
       }
 
-      // Atualizar opções se fornecidas
+      // Atualizar opções se fornecidas E forem válidas
       if (options && Array.isArray(options) && options.length >= 3) {
-        // Deletar opções antigas
-        await Option.destroy({ where: { PollId: id } });
+        // Validar que todas as opções têm texto não vazio
+        const validOptions = options.map((opt) => opt.trim()).filter((opt) => opt);
+        
+        if (validOptions.length >= 3) {
+          // Obter opções antigas para comparação
+          const oldOptions = await Option.findAll({ where: { PollId: id } });
+          
+          // Atualizar opções existentes (preserva votos)
+          for (let i = 0; i < Math.min(validOptions.length, oldOptions.length); i++) {
+            await oldOptions[i].update({ text: validOptions[i] });
+          }
 
-        // Criar novas opções
-        const optionPromises = options.map((opt) =>
-          Option.create({ text: opt, PollId: id })
-        );
-        await Promise.all(optionPromises);
+          // Se há mais opções novas que antigas, criar as adicionais
+          if (validOptions.length > oldOptions.length) {
+            const newOptionsToCreate = validOptions.slice(oldOptions.length);
+            const optionPromises = newOptionsToCreate.map((opt) =>
+              Option.create({ text: opt, PollId: id })
+            );
+            await Promise.all(optionPromises);
+          }
+
+          // Se há menos opções novas que antigas, deletar apenas as extras
+          if (validOptions.length < oldOptions.length) {
+            const optionsToDelete = oldOptions.slice(validOptions.length);
+            const deletePromises = optionsToDelete.map((opt) => opt.destroy());
+            await Promise.all(deletePromises);
+          }
+        } else {
+          return res
+            .status(400)
+            .json({ message: "Mínimo de 3 opções válidas e preenchidas é obrigatório" });
+        }
       }
 
       await poll.save();
