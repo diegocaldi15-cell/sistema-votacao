@@ -434,3 +434,41 @@
     width: 100%;
   }
 }
+
+.mobileOrderControl {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+.mobileOrderControl button {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: var(--border);
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.mobileOrderControl button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Garante que só apareça no mobile */
+@media (pointer: fine) {
+  .mobileOrderControl {
+    display: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .optionInputGroup {
+    cursor: default;
+  }
+}

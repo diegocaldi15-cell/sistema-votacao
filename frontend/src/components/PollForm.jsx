@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { pollAPI } from "../utils/pollAPI";
 import styles from "../styles/PollForm.module.css";
 
@@ -14,6 +14,19 @@ function PollForm({ poll, edit, onSuccess, onCancel }) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [draggedIndex, setDraggedIndex] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detectar se é mobile
+  useEffect(() => {
+    const media = window.matchMedia("(pointer: coarse)");
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsMobile(media.matches);
+
+    const listener = (e) => setIsMobile(e.matches);
+    media.addEventListener("change", listener);
+
+    return () => media.removeEventListener("change", listener);
+  }, []);
 
   // Inputs Simples
   const handleInputChange = (e) => {
@@ -56,33 +69,41 @@ function PollForm({ poll, edit, onSuccess, onCancel }) {
 
   // Drag and Drop
   const handleDragStart = (index) => {
+    if (isMobile) return;
     setDraggedIndex(index);
   };
 
   const handleDragOver = (e) => {
+    if (isMobile) return;
     e.preventDefault();
   };
 
-  const handleDrop = (targetIndex) => {
-    if (draggedIndex === null || draggedIndex === targetIndex) return;
+  const moveOption = (from, to) => {
+    if (to < 0 || to >= formData.options.length) return;
 
     const newOptions = [...formData.options];
-    const draggedItem = newOptions[draggedIndex];
+    const item = newOptions[from];
 
-    // Remove o item arrastado
-    newOptions.splice(draggedIndex, 1);
-    // Insere na nova posição
-    newOptions.splice(targetIndex, 0, draggedItem);
+    // Remove e insere o item arrastado
+    newOptions.splice(from, 1);
+    newOptions.splice(to, 0, item);
 
-    const newOrderedOptions = newOptions.map((opt, order) => ({
+    const orderedOptions = newOptions.map((opt, order) => ({
       ...opt,
       order,
     }));
 
     setFormData((prev) => ({
       ...prev,
-      options: newOrderedOptions,
+      options: orderedOptions,
     }));
+  };
+
+  const handleDrop = (targetIndex) => {
+    if (isMobile) return;
+    if (draggedIndex === null || draggedIndex === targetIndex) return;
+
+    moveOption(draggedIndex, targetIndex);
     setDraggedIndex(null);
   };
 
@@ -200,7 +221,10 @@ function PollForm({ poll, edit, onSuccess, onCancel }) {
           <div className={styles.optionsHeader}>
             <h3>Opções de Resposta *</h3>
             <p className={styles.hint}>
-              Mínimo 3 opções • Arraste para reordenar
+              Mínimo 3 opções •{" "}
+              {isMobile
+                ? "Use os botões para reordenar"
+                : "Arraste para reordenar"}
             </p>
           </div>
 
@@ -211,12 +235,33 @@ function PollForm({ poll, edit, onSuccess, onCancel }) {
                 className={`${styles.optionInputGroup} ${
                   draggedIndex === index ? styles.dragging : ""
                 }`}
-                draggable
+                draggable={!isMobile}
                 onDragStart={() => handleDragStart(index)}
                 onDragOver={handleDragOver}
                 onDrop={() => handleDrop(index)}
               >
-                <div className={styles.dragHandle}>⋮⋮</div>
+                {/* Botões mobile */}
+                {isMobile && (
+                  <div className={styles.mobileOrderControl}>
+                    <button
+                      type="button"
+                      onClick={() => moveOption(index, index - 1)}
+                      disabled={index === 0}
+                      aria-label="Mover para cima"
+                    >
+                      ↑
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => moveOption(index, index + 1)}
+                      disabled={index === formData.options.length - 1}
+                      aria-label="Mover para baixo"
+                    >
+                      ↓
+                    </button>
+                  </div>
+                )}
+                {!isMobile && <div className={styles.dragHandle}>⋮⋮</div>}
                 <input
                   type="text"
                   value={opt.text}
