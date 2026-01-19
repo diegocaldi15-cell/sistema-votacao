@@ -26,11 +26,11 @@ mysql --version     # 5.7.0 ou superior
 ```bash
 # Se estiver versionado no Git
 git clone <seu-repositorio>
-cd sistema-votacao
+cd sistema-de-votacao
 
 # Ou extrair o ZIP
-unzip sistema-votacao.zip
-cd sistema-votacao
+unzip sistema-de-votacao.zip
+cd sistema-de-votacao
 ```
 
 ### 2. Instalar Dependências
@@ -54,13 +54,6 @@ npm install
 ## 🗄️ Configurar Banco de Dados
 
 ### 1. Criar arquivo `.env` no Backend
-
-```bash
-# Na pasta backend/
-touch .env
-# Ou no Windows:
-type nul > .env
-```
 
 Adicione o seguinte conteúdo (adapte as credenciais):
 
@@ -152,14 +145,7 @@ Tabelas sincronizadas
 
 ### Frontend
 
-Em outro terminal:
-
-```bash
-# Na pasta frontend/
-touch .env
-# Ou no Windows:
-type nul > .env
-```
+Crie o arquivo .env no Frontend
 
 Adicione o seguinte conteúdo (adapte as credenciais):
 
@@ -332,30 +318,39 @@ npm run dev
 ```
 sistema-votacao/
 ├── backend/
-│   ├── scripts/           # Scripts de DB
+│   ├── config/
+│   │   └── database.js   # Configuração MySQL
+│   ├── handlers/
+│   │   └── socketHandlers.js
+│   ├── models/
+│   │   ├── index.js
+│   │   ├── Poll.js
+│   │   ├── Option.js
+│   │   └── Vote.js
+│   ├── routes/
+│   │   └── polls.js
+│   ├── scripts/           # Scripts de BD
 │   │   ├── check-db.js   # Verifica
 │   │   ├── init-db.js    # Inicializar
 │   │   ├── reset-db.js   # Resetar
 │   │   ├── seed-db.js    # Popular
-│   │   ├── README.md     # Guia completo
-│   │   └── README.md     # Documentação
-│   ├── config/
-│   │   └── database.js   # Configuração MySQL
-│   ├── models/
-│   │   ├── Poll.js
-│   │   ├── Option.js
-│   │   └── Vote.js
+│   │   └── README.md     # Guia e Documentação do BD
+│   ├── utils/
+│   │   └── database.js
 │   ├── app.js            # Servidor principal
 │   ├── package.json
 │   ├── .env              # Variáveis de ambiente
 │   └── node_modules/
 │
 ├── frontend/
-│   ├── src/
-│   │   ├── components/   # Componentes React
-│   │   └── styles/       # CSS Modules
 │   ├── public/
-│   ├── env.local
+│   ├── src/
+│   │   ├── assets/       # Imagens
+│   │   ├── components/   # Componentes React
+│   │   ├── hooks/
+│   │   ├── styles/       # CSS Modules
+│   │   └── utils/
+│   ├── env
 │   ├── env.production
 │   ├── package.json
 │   └── node_modules/

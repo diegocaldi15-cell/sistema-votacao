@@ -49,12 +49,12 @@ Você vai:
 
 ### 🎯 Projeto & Funcionalidades
 
-| Arquivo                                                  | Para Quem                 | Tempo  |
-| -------------------------------------------------------- | ------------------------- | ------ |
-| [README.md](./README.md)                                 | Quem quer visão geral     | 20 min |
+| Arquivo                                                                     | Para Quem              | Tempo  |
+| --------------------------------------------------------------------------- | ---------------------- | ------ |
+| [README.md](./README.md)                                                    | Quem quer visão geral  | 20 min |
 | [README.md - Exemplos de Requisições](./README.md#-exemplos-de-requisições) | Quem quer testar a API | 10 min |
-| [backend/scripts/README.md](./backend/scripts/README.md) | Quem quer usar scripts    | 15 min |
-| [backend/scripts/README.md](./backend/scripts/README.md) | Guia completo | 1 hora |
+| [backend/scripts/README.md](./backend/scripts/README.md)                    | Quem quer usar scripts | 15 min |
+| [backend/scripts/README.md](./backend/scripts/README.md)                    | Guia completo          | 1 hora |
 
 ---
 
@@ -237,13 +237,12 @@ npm run seed:db     # Adicionar novos
 
 ## 📞 Sumário de Arquivos
 
-| Arquivo                   | O que é               | Quando ler          |
-| ------------------------- | --------------------- | ------------------- |
-| INDEX.md                  | Este arquivo          | Sempre (referência) |
-| QUICK-START.md            | Para começar logo     | Primeira vez        |
-| SETUP.md                  | Instruções detalhadas | Setup inicial       |
-| README.md                 | Documentação completa | Aprendizado         |
-| DATABASE-SETUP.md         | Resumo do sistema     | Referência rápida   |
-| SYSTEM-MAP.md             | Diagrama visual       | Referência visual   |
-| backend/scripts/README.md | Docs dos scripts      | Usar scripts        |
-| backend/scripts/README.md  | Docs e guia completo  | Usar e customizar   |
+| Arquivo                   | O que é                 | Quando ler          |
+| ------------------------- | ----------------------- | ------------------- |
+| INDEX.md                  | Este arquivo            | Sempre (referência) |
+| QUICK-START.md            | Para começar logo       | Primeira vez        |
+| SETUP.md                  | Instruções detalhadas   | Setup inicial       |
+| README.md                 | Documentação completa   | Aprendizado         |
+| DATABASE-SETUP.md         | Resumo do sistema       | Referência rápida   |
+| SYSTEM-MAP.md             | Diagrama visual         | Referência visual   |
+| backend/scripts/README.md | Docs dos scripts e Guia | Usar scripts e Guia |

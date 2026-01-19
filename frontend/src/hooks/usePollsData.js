@@ -41,8 +41,7 @@ export const usePollsData = () => {
 
   // Listener para votos em realtime
   useEffect(() => {
-    socketListeners.setupVotesUpdatedListener((data) => {
-      console.log("Votos atualizados:", data);
+    socketListeners.setupVotesUpdatedListener(() => {
       loadPolls();
     });
 
@@ -63,7 +62,7 @@ export const usePollsData = () => {
           setError("Erro ao deletar enquete");
         });
     },
-    [loadPolls]
+    [loadPolls],
   );
 
   return {

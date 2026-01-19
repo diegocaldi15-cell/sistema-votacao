@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
 const Poll = sequelize.define(
-  "Poll",
+  "poll",
   {
     title: { type: DataTypes.STRING, allowNull: false },
     description: { type: DataTypes.TEXT },
@@ -13,7 +13,7 @@ const Poll = sequelize.define(
     timestamps: false,
     charset: "utf8mb4",
     collate: "utf8mb4_unicode_ci",
-  }
+  },
 );
 
 module.exports = Poll;

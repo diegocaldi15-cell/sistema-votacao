@@ -14,8 +14,6 @@ export const pollAPI = {
 
   delete: (pollId) => axios.delete(`${API_URL}/api/polls/${pollId}`),
 
-  getResults: (pollId) => axios.get(`${API_URL}/api/polls/${pollId}/results`),
-
   vote: (pollId, optionId) =>
     axios.post(`${API_URL}/api/polls/${pollId}/vote`, { optionId }),
 };

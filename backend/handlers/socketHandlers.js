@@ -1,7 +1,5 @@
 const Poll = require("../models/Poll");
 const Option = require("../models/Option");
-const Vote = require("../models/Vote");
-const { getResults } = require("../utils/pollUtils");
 
 module.exports = function setupSocketHandlers(io) {
   io.on("connection", (socket) => {

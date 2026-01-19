@@ -1,53 +1,18 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { pollAPI } from "../utils/pollAPI";
 import styles from "../styles/PollDetail.module.css";
 
-function PollDetail({ pollId, onBack, socket }) {
-  const [poll, setPoll] = useState(null);
-  const [loading, setLoading] = useState(true);
+function PollDetail({ poll, onBack, onPollUpdate, socket }) {
   const [error, setError] = useState(null);
-  const [results, setResults] = useState(null);
   const [pendingVote, setPendingVote] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
-  const loadResults = useCallback(() => {
-    pollAPI
-      .getResults(pollId)
-      .then((res) => {
-        setResults(res.data.results);
-      })
-      .catch((err) => console.error("Erro ao carregar resultados:", err));
-  }, [pollId]);
-
   useEffect(() => {
     // Carregar detalhes da enquete e resultados
-    pollAPI
-      .getById(pollId)
-      .then((res) => {
-        setPoll(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Erro ao carregar detalhes:", err);
-        setError("Erro ao carregar enquete");
-        setLoading(false);
-      });
-
-    // Carregar resultados
-    loadResults();
-
-    // Listener para atualizações de votos em tempo real
-    const handleUpdateVotes = (data) => {
-      if (data.pollId === pollId) {
-        loadResults();
-      }
-    };
-
-    socket.off("updateVotes", handleUpdateVotes);
-    socket.on("updateVotes", handleUpdateVotes);
-
-    return () => socket.off("updateVotes", handleUpdateVotes);
-  }, [pollId, socket, loadResults]);
+    socket.off("updateVotes", onPollUpdate);
+    socket.on("updateVotes", onPollUpdate);
+    return () => socket.off("updateVotes", onPollUpdate);
+  }, [socket, onPollUpdate]);
 
   const handleVote = (optionId) => {
     // Armazena o voto pendente e mostra confirmação
@@ -59,10 +24,9 @@ function PollDetail({ pollId, onBack, socket }) {
     if (!pendingVote) return;
 
     pollAPI
-      .vote(pollId, pendingVote)
+      .vote(poll.id, pendingVote)
       .then(() => {
         // Recarrega resultados
-        loadResults();
         setError(null);
         setShowConfirmation(false);
         setPendingVote(null);
@@ -79,14 +43,6 @@ function PollDetail({ pollId, onBack, socket }) {
     setShowConfirmation(false);
     setPendingVote(null);
   };
-
-  if (loading) {
-    return (
-      <div className={styles.container}>
-        <p>Carregando enquete...</p>
-      </div>
-    );
-  }
 
   if (!poll) {
     return (
@@ -156,9 +112,9 @@ function PollDetail({ pollId, onBack, socket }) {
         </div>
 
         <div className={styles.optionsContainer}>
-          {poll.Options && poll.Options.length > 0 ? (
-            poll.Options.map((option) => {
-              const voteCount = results ? results[option.id]?.votes || 0 : 0;
+          {poll.options && poll.options.length > 0 ? (
+            poll.options.map((option) => {
+              const voteCount = option.votes.reduce((total) => total + 1, 0);
               return (
                 <div
                   key={option.id}
@@ -200,21 +156,15 @@ function PollDetail({ pollId, onBack, socket }) {
             <p>
               Tem certeza que deseja votar em:{" "}
               <strong>
-                {poll.Options.find((opt) => opt.id === pendingVote)?.text}
+                {poll.options.find((opt) => opt.id === pendingVote)?.text}
               </strong>
               ?
             </p>
             <div className={styles.confirmationButtons}>
-              <button
-                className={styles.btnConfirm}
-                onClick={confirmVote}
-              >
+              <button className={styles.btnConfirm} onClick={confirmVote}>
                 Confirmar
               </button>
-              <button
-                className={styles.btnCancel}
-                onClick={cancelVote}
-              >
+              <button className={styles.btnCancel} onClick={cancelVote}>
                 Cancelar
               </button>
             </div>

@@ -98,24 +98,25 @@ root/
 ├── 📦 backend/
 │   ├── 📂 config/
 │   │   └── database.js          # Configuração Sequelize
+│   ├── 📂 handlers/
+│   │   └── socketHandlers.js    # Handlers de WebSocket
 │   ├── 📂 models/
+│   │   ├── index.js             # Index de Associação
 │   │   ├── Poll.js              # Modelo de enquete
 │   │   ├── Option.js            # Modelo de opção
 │   │   └── Vote.js              # Modelo de voto
 │   ├── 📂 routes/
-│   │   └── polls.js             # Rotas das enquetes (GET, POST, PUT, DELETE)
-│   ├── 📂 handlers/
-│   │   └── socketHandlers.js    # Handlers de WebSocket em tempo real
-│   ├── 📂 utils/
-│   │   ├── database.js          # Utilitários de banco de dados
-│   │   └── pollUtils.js         # Funções auxiliares de enquete
+│   │   └── polls.js             # Rotas das enquetes
 │   ├── 📂 scripts/              # Scripts utilitários
 │   │   ├── init-db.js           # Inicializar BD
 │   │   ├── reset-db.js          # Resetar BD
 │   │   ├── seed-db.js           # Popular BD
 │   │   ├── check-db.js          # Verifica o BD
 │   │   └── README.md            # Guia completo de scripts
-│   │ 
+│   ├── 📂 utils/
+│   │   ├── database.js          # Utilitários de banco de dados
+│   │   └── pollUtils.js         # Funções auxiliares de enquete
+│   │
 │   ├── app.js                   # Servidor Express com Socket.io
 │   ├── package.json
 │   └── .env                     # Variáveis de ambiente
@@ -127,19 +128,19 @@ root/
 │   │   ├── main.jsx
 │   │   ├── 📂 assets/
 │   │   ├── 📂 components/
-│   │   │   ├── PollList.jsx     # Lista de enquetes
+│   │   │   └── ConfirmationModal.jsx  # Modal de confirmação
 │   │   │   ├── PollDetail.jsx   # Detalhes e votação
 │   │   │   ├── PollForm.jsx     # Criar/editar enquete
-│   │   │   └── ConfirmationModal.jsx  # Modal de confirmação
+│   │   │   ├── PollList.jsx     # Lista de enquetes
 │   │   ├── 📂 hooks/
 │   │   │   └── usePollsData.js  # Hook customizado para dados
 │   │   ├── 📂 styles/
-│   │   │   ├── global.css
 │   │   │   ├── App.module.css
-│   │   │   ├── PollList.module.css
+│   │   │   └── ConfirmationModal.module.css
+│   │   │   ├── global.css
 │   │   │   ├── PollDetail.module.css
 │   │   │   ├── PollForm.module.css
-│   │   │   └── ConfirmationModal.module.css
+│   │   │   ├── PollList.module.css
 │   │   └── 📂 utils/
 │   │       ├── pollAPI.js       # Funções da API
 │   │       └── socketClient.js  # Configuração WebSocket
@@ -147,7 +148,6 @@ root/
 │   ├── package.json
 │   ├── vite.config.js
 │   ├── eslint.config.js
-│   ├── example.env              # Template de variáveis
 │   └── .env                     # Variáveis de ambiente
 │
 ├── SETUP.md                     # Guia de configuração
@@ -188,33 +188,44 @@ root/
 ### GET /api/polls - Listar todas as enquetes
 
 **Requisição:**
+
 ```bash
 curl -X GET http://localhost:5000/api/polls
 ```
 
 **Resposta (200 OK):**
+
 ```json
-[
-  {
-    "id": 1,
-    "title": "Qual é sua linguagem de programação favorita?",
-    "description": null,
-    "startDate": "2026-01-15T12:00:00.000Z",
-    "endDate": "2026-01-22T12:00:00.000Z",
-    "Options": [
-      {
-        "id": 1,
-        "text": "JavaScript / TypeScript",
-        "PollId": 1
-      },
-      {
-        "id": 2,
-        "text": "Python",
-        "PollId": 1
-      }
-    ]
-  }
-]
+{
+  "id": 1,
+  "title": "Qual é sua linguagem favorita?",
+  "description": null,
+  "startDate": "2026-01-17T10:00:00.000Z",
+  "endDate": "2026-01-24T10:00:00.000Z",
+  "options": [
+    {
+      "id": 1,
+      "text": "JavaScript",
+      "order": 0,
+      "pollId": 1,
+      "votes": []
+    },
+    {
+      "id": 2,
+      "text": "Python",
+      "order": 1,
+      "pollId": 1,
+      "votes": []
+    },
+    {
+      "id": 3,
+      "text": "Java",
+      "order": 2,
+      "pollId": 1,
+      "votes": []
+    }
+  ]
+}
 ```
 
 ---
@@ -222,6 +233,7 @@ curl -X GET http://localhost:5000/api/polls
 ### POST /api/polls - Criar nova enquete
 
 **Requisição:**
+
 ```bash
 curl -X POST http://localhost:5000/api/polls \
   -H "Content-Type: application/json" \
@@ -238,21 +250,23 @@ curl -X POST http://localhost:5000/api/polls \
 ```
 
 **Requisição em JavaScript (Fetch):**
+
 ```javascript
-const response = await fetch('http://localhost:5000/api/polls', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+const response = await fetch("http://localhost:5000/api/polls", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
-    title: 'Qual é sua linguagem favorita?',
-    startDate: '2026-01-17T10:00:00Z',
-    endDate: '2026-01-24T10:00:00Z',
-    options: ['JavaScript', 'Python', 'Java']
-  })
+    title: "Qual é sua linguagem favorita?",
+    startDate: "2026-01-17T10:00:00Z",
+    endDate: "2026-01-24T10:00:00Z",
+    options: ["JavaScript", "Python", "Java"],
+  }),
 });
 const data = await response.json();
 ```
 
 **Resposta (201 Created):**
+
 ```json
 {
   "message": "Enquete criada com sucesso",
@@ -262,21 +276,24 @@ const data = await response.json();
     "description": null,
     "startDate": "2026-01-17T10:00:00.000Z",
     "endDate": "2026-01-24T10:00:00.000Z",
-    "Options": [
+    "options": [
       {
-        "id": 10,
+        "id": 13,
         "text": "JavaScript",
-        "PollId": 4
+        "order": 0,
+        "pollId": 4
       },
       {
-        "id": 11,
-        "text": "Python",
-        "PollId": 4
-      },
-      {
-        "id": 12,
+        "id": 14,
         "text": "Java",
-        "PollId": 4
+        "order": 2,
+        "pollId": 4
+      },
+      {
+        "id": 15,
+        "text": "Python",
+        "order": 1,
+        "pollId": 4
       }
     ]
   }
@@ -285,78 +302,100 @@ const data = await response.json();
 
 ---
 
-### PUT /api/polls/:id - Atualizar enquete PRESERVA VOTOS
+### PUT /api/polls/:id - Atualizar enquete
 
 **Requisição (Reordenar Opções):**
+
 ```bash
 curl -X PUT http://localhost:5000/api/polls/1 \
   -H "Content-Type: application/json" \
   -d '{
-    "title": "Qual é sua linguagem de programação favorita?",
-    "startDate": "2026-01-15T12:00:00Z",
-    "endDate": "2026-01-22T12:00:00Z",
+    "id": 4,
+    "title": "Qual é sua linguagem favorita?",
+    "description": null,
+    "startDate": "2026-01-17T10:00:00.000Z",
+    "endDate": "2026-01-24T10:00:00.000Z",
     "options": [
-      "Python",
-      "JavaScript / TypeScript",
-      "Java",
-      "C / C++"
+        {
+            "id": 13,
+            "text": "JavaScript",
+            "order": 0
+        },
+        {
+            "id": 15,
+            "text": "Python",
+            "order": 1
+        },
+        {
+            "id": 14,
+            "text": "Java",
+            "order": 2
+        },
+        {
+            "text": "C#",
+            "order": 3
+        }
     ]
-  }'
+}'
 ```
 
 **Requisição em JavaScript (Reordenar):**
+
 ```javascript
-const response = await fetch('http://localhost:5000/api/polls/1', {
-  method: 'PUT',
-  headers: { 'Content-Type': 'application/json' },
+const response = await fetch("http://localhost:5000/api/polls/1", {
+  method: "PUT",
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
-    title: 'Qual é sua linguagem de programação favorita?',
-    startDate: '2026-01-15T12:00:00Z',
-    endDate: '2026-01-22T12:00:00Z',
+    title: "Qual é sua linguagem favorita?",
+    startDate: "2026-01-17T10:00:000Z",
+    endDate: "2026-01-24T10:00:000Z",
     options: [
-      'Python',                    // Mudou de posição (order: 0)
-      'JavaScript / TypeScript',   // Mudou de posição (order: 1)
-      'Java',                      // Novidade (order: 2)
-      'C / C++'                    // Mantém (order: 3)
-    ]
-  })
+      { id: 13, text: "JavaScript", order: 0 },
+      { id: 15, text: "Python", order: 1 },
+      { id: 14, text: "Java", order: 2 },
+      { text: "C#", order: 3 },
+    ],
+  }),
 });
+
 const data = await response.json();
 ```
 
 **Resposta (200 OK):**
+
 ```json
 {
   "message": "Enquete atualizada com sucesso",
   "poll": {
-    "id": 1,
-    "title": "Qual é sua linguagem de programação favorita?",
-    "startDate": "2026-01-15T12:00:00.000Z",
-    "endDate": "2026-01-22T12:00:00.000Z",
-    "Options": [
+    "id": 4,
+    "title": "Qual é sua linguagem favorita?",
+    "description": null,
+    "startDate": "2026-01-17T10:00:00.000Z",
+    "endDate": "2026-01-24T10:00:00.000Z",
+    "options": [
       {
-        "id": 2,
-        "text": "Python",
+        "id": 13,
+        "text": "JavaScript",
         "order": 0,
-        "PollId": 1
+        "pollId": 4
       },
       {
-        "id": 1,
-        "text": "JavaScript / TypeScript",
+        "id": 15,
+        "text": "Python",
         "order": 1,
-        "PollId": 1
+        "pollId": 4
       },
       {
-        "id": 3,
+        "id": 14,
         "text": "Java",
         "order": 2,
-        "PollId": 1
+        "pollId": 4
       },
       {
-        "id": 4,
-        "text": "C / C++",
+        "id": 16,
+        "text": "C#",
         "order": 3,
-        "PollId": 1
+        "pollId": 4
       }
     ]
   }
@@ -368,23 +407,71 @@ const data = await response.json();
 ### GET /api/polls/:id - Obter detalhes de uma enquete
 
 **Requisição:**
+
 ```bash
 curl -X GET http://localhost:5000/api/polls/1
 ```
 
 **Resposta (200 OK):**
+
 ```json
 {
   "id": 1,
-  "title": "Qual é sua linguagem de programação favorita?",
+  "title": "📚 Qual é o melhor framework web?",
   "description": null,
-  "startDate": "2026-01-15T12:00:00.000Z",
-  "endDate": "2026-01-22T12:00:00.000Z",
-  "Options": [
+  "startDate": "2026-01-04T19:03:15.000Z",
+  "endDate": "2026-01-17T19:03:15.000Z",
+  "options": [
     {
       "id": 1,
-      "text": "JavaScript / TypeScript",
-      "PollId": 1
+      "text": "React",
+      "order": 0,
+      "pollId": 1,
+      "votes": [
+        {
+          "id": 1,
+          "optionId": 1,
+          "pollId": null
+        },
+        {
+          "id": 2,
+          "optionId": 1,
+          "pollId": null
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "text": "Vue.js",
+      "order": 1,
+      "pollId": 1,
+      "votes": [
+        {
+          "id": 3,
+          "optionId": 2,
+          "pollId": null
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "text": "Angular",
+      "order": 2,
+      "pollId": 1,
+      "votes": [
+        {
+          "id": 4,
+          "optionId": 3,
+          "pollId": null
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "text": "Svelte",
+      "order": 3,
+      "pollId": 1,
+      "votes": []
     }
   ]
 }
@@ -395,11 +482,13 @@ curl -X GET http://localhost:5000/api/polls/1
 ### DELETE /api/polls/:id - Deletar uma enquete
 
 **Requisição:**
+
 ```bash
 curl -X DELETE http://localhost:5000/api/polls/4
 ```
 
 **Resposta (200 OK):**
+
 ```json
 {
   "message": "Enquete deletada com sucesso"
@@ -411,21 +500,24 @@ curl -X DELETE http://localhost:5000/api/polls/4
 ### POST /api/polls/:id/vote - Votar em uma opção
 
 **Requisição:**
+
 ```bash
-curl -X POST http://localhost:5000/api/polls/1/vote \
+curl -X POST http://localhost:5000/api/polls/3/vote \
   -H "Content-Type: application/json" \
   -d '{
-    "optionId": 1
+    "optionId": 9
   }'
 ```
 
 **Resposta (201 Created):**
+
 ```json
 {
   "message": "Voto registrado com sucesso",
   "vote": {
-    "id": 25,
-    "OptionId": 1
+    "id": 5,
+    "optionId": 9,
+    "pollId": "3"
   }
 }
 ```
@@ -435,35 +527,39 @@ curl -X POST http://localhost:5000/api/polls/1/vote \
 ### GET /api/polls/:id/results - Obter resultados da enquete
 
 **Requisição:**
+
 ```bash
 curl -X GET http://localhost:5000/api/polls/1/results
 ```
 
 **Resposta (200 OK):**
+
 ```json
 {
-  "poll": {
-    "id": 1,
-    "title": "Qual é sua linguagem de programação favorita?",
-    "description": null,
-    "startDate": "2026-01-15T12:00:00.000Z",
-    "endDate": "2026-01-22T12:00:00.000Z",
-    "Options": [...]
-  },
-  "results": {
-    "1": {
+  "pollId": 1,
+  "title": "🎨 Qual é sua linguagem de programação favorita?",
+  "results": [
+    {
+      "id": 1,
       "text": "JavaScript / TypeScript",
-      "votes": 5
-    },
-    "2": {
-      "text": "Python",
       "votes": 3
     },
-    "3": {
-      "text": "Java",
+    {
+      "id": 2,
+      "text": "Python",
       "votes": 2
+    },
+    {
+      "id": 3,
+      "text": "Java",
+      "votes": 0
+    },
+    {
+      "id": 4,
+      "text": "C / C++",
+      "votes": 5
     }
-  }
+  ]
 }
 ```
 
@@ -473,12 +569,13 @@ curl -X GET http://localhost:5000/api/polls/1/results
 
 ### POST /api/polls - Criar Enquete
 
-| Campo | Tipo | Obrigatório | Regras |
-|-------|------|-------------|--------|
-| `title` | String | ✅ Sim | Não pode estar vazio |
-| `startDate` | ISO 8601 | ✅ Sim | Deve ser válido |
-| `endDate` | ISO 8601 | ✅ Sim | Deve ser posterior a `startDate` |
-| `options` | Array | ✅ Sim | Mínimo 3 opções, cada uma é string |
+| Campo         | Tipo     | Obrigatório | Regras                             |
+| ------------- | -------- | ----------- | ---------------------------------- |
+| `title`       | String   | ✅ Sim      | Não pode estar vazio               |
+| `description` | String   | ❌ Não      | Pode estar vazio                   |
+| `startDate`   | ISO 8601 | ✅ Sim      | Deve ser válido                    |
+| `endDate`     | ISO 8601 | ✅ Sim      | Deve ser posterior a `startDate`   |
+| `options`     | Array    | ✅ Sim      | Mínimo 3 opções, cada uma é string |
 
 **Erros Possíveis:**
 
@@ -494,14 +591,15 @@ curl -X GET http://localhost:5000/api/polls/1/results
 }
 ```
 
-### PUT /api/polls/:id - Atualizar Enquete ⭐
+### PUT /api/polls/:id - Atualizar Enquete
 
-| Campo | Tipo | Obrigatório | Regras | Observação |
-|-------|------|-------------|--------|-----------|
-| `title` | String | ❌ Não | Se informado, não pode estar vazio | Pode ser omitido |
-| `startDate` | ISO 8601 | ❌ Não | Se informado, deve ser válido | Pode ser omitido |
-| `endDate` | ISO 8601 | ❌ Não | Se informado, deve ser posterior a `startDate` | Pode ser omitido |
-| `options` | Array | ❌ Não | Se informado, mínimo 3 opções válidas | **Votos preservados pelo texto!** |
+| Campo         | Tipo     | Obrigatório | Regras                                         | Observação                |
+| ------------- | -------- | ----------- | ---------------------------------------------- | ------------------------- |
+| `title`       | String   | ❌ Não      | Se informado, não pode estar vazio             | Pode ser omitido          |
+| `description` | String   | ❌ Não      | Pode estar vazio                               |
+| `startDate`   | ISO 8601 | ❌ Não      | Se informado, deve ser válido                  | Pode ser omitido          |
+| `endDate`     | ISO 8601 | ❌ Não      | Se informado, deve ser posterior a `startDate` | Pode ser omitido          |
+| `options`     | Array    | ❌ Não      | Se informado, mínimo 3 opções válidas          | Votos preservados pelo ID |
 
 **Erros Possíveis:**
 
@@ -519,9 +617,9 @@ curl -X GET http://localhost:5000/api/polls/1/results
 
 ### POST /api/polls/:id/vote - Votar
 
-| Campo | Tipo | Obrigatório | Regras |
-|-------|------|-------------|--------|
-| `optionId` | Integer | ✅ Sim | Deve existir e pertencer à enquete |
+| Campo      | Tipo    | Obrigatório | Regras                             |
+| ---------- | ------- | ----------- | ---------------------------------- |
+| `optionId` | Integer | ✅ Sim      | Deve existir e pertencer à enquete |
 
 **Erros Possíveis:**
 
@@ -547,13 +645,13 @@ curl -X GET http://localhost:5000/api/polls/1/results
 
 ## 🔴 Códigos de Resposta HTTP
 
-| Código | Significado | Quando Ocorre |
-|--------|------------|---------------|
-| 200 | OK | GET, PUT e DELETE bem-sucedidos |
-| 201 | Created | POST bem-sucedido (recurso criado) |
-| 400 | Bad Request | Validação falhou (campos inválidos, datas erradas) |
-| 404 | Not Found | Enquete ou opção não existe |
-| 500 | Server Error | Erro interno do servidor |
+| Código | Significado  | Quando Ocorre                                      |
+| ------ | ------------ | -------------------------------------------------- |
+| 200    | OK           | GET, PUT e DELETE bem-sucedidos                    |
+| 201    | Created      | POST bem-sucedido (recurso criado)                 |
+| 400    | Bad Request  | Validação falhou (campos inválidos, datas erradas) |
+| 404    | Not Found    | Enquete ou opção não existe                        |
+| 500    | Server Error | Erro interno do servidor                           |
 
 ---
 
@@ -577,6 +675,7 @@ curl -X GET http://localhost:5000/api/polls/1/results
 {
   id: Integer (Primary Key),
   text: String,
+  order: Integer NOT NULL,
   pollId: Integer (Foreign Key)
 }
 ```
@@ -586,6 +685,7 @@ curl -X GET http://localhost:5000/api/polls/1/results
 ```javascript
 {
   id: Integer (Primary Key),
+  pollId: Integer (FOreign Key),
   optionId: Integer (Foreign Key)
 }
 ```
@@ -667,19 +767,20 @@ Quando você **edita uma enquete**, o sistema preserva inteligentemente:
 - ✅ **Ordem das opções** - Preserva a ordem que você define (salva no banco com campo `order`)
 - ✅ **Datas** - Pode alterar datas sem perder votos
 - ✅ **Título** - Pode renomear a enquete sem afetar votos
+- ✅ **Opções** - Pode renomear as opções sem afetar votos
 
 ### Exemplos Práticos
 
 #### Cenário 1: Reordenar Opções
 
 ```
-ANTES:                      DEPOIS (após editar):
-1. Python (3 votos)   →     1. Java (2 votos)
-2. Java (2 votos)     →     2. Python (3 votos)
-3. JavaScript (5)     →     3. JavaScript (5)
+ANTES:                          DEPOIS (após editar):
+1. Python (3 votos)       →     1. Java (2 votos)
+2. Java (2 votos)         →     2. Python (3 votos)
+3. JavaScript (5 votos)   →     3. JavaScript (5 votos)
 ```
 
-✅ **Resultado:** Os votos seguem o texto da opção, não a posição!
+✅ **Resultado:** Os votos seguem o ID da opção, não a posição!
 
 #### Cenário 2: Alterar Data
 
@@ -697,22 +798,18 @@ Java: 2 votos                       Java: 2 votos
 
 ```
 ANTES:                      DEPOIS (após editar):
-Python: 3 votos      →      Python 3.12: 0 votos
+Python: 3 votos      →      Python 3.12: 3 votos
 ```
 
-✅ **Resultado:** A opção antiga é deletada e uma nova é criada com o mesmo número de votos? **NÃO!**
-
-❌ **Importante:** Se você renomear uma opção, ela é considerada "nova" e começa com 0 votos. A opção antiga é deletada com seus votos.
-
-**Para manter votos, preserve o texto da opção!**
+✅ **Resultado:** A opção antiga não é deletada.
 
 ### Como o Backend Preserva os Dados
 
 ```javascript
 // Ao editar uma enquete (PUT /api/polls/:id)
-// 1. Identifica opções pelo TEXTO (não pelo ID)
+// 1. Identifica opções pelo ID
 // 2. Para cada opção:
-//    ├─ Se o texto existe no banco → atualiza (votos preservados)
+//    ├─ Se o ID existe no banco → atualiza (votos preservados)
 //    ├─ Se é novo → cria (0 votos)
 //    └─ Se foi removido → deleta (votos também são deletados)
 // 3. Atualiza o campo 'order' para preservar a ordem
@@ -725,8 +822,7 @@ TABLE: options
 ├─ id: Integer (Primary Key)
 ├─ text: String (identifica a opção)
 ├─ order: Integer (preserva a ordem)
-├─ pollId: Integer (Foreign Key)
-└─ ...timestamps
+└─ pollId: Integer (Foreign Key)
 ```
 
 O campo `order` garante que as opções sempre apareçam na ordem que você definiu, independentemente de quantas edições você fizer.

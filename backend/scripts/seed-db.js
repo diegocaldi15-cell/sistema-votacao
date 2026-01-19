@@ -7,6 +7,7 @@
 
 require("dotenv").config();
 const sequelize = require("../config/database");
+require("../models");
 const Poll = require("../models/Poll");
 const Option = require("../models/Option");
 const Vote = require("../models/Vote");
@@ -19,12 +20,6 @@ async function seedDatabase() {
     console.log("🔗 Conectando ao banco de dados...");
     await sequelize.authenticate();
     console.log("✓ Conexão estabelecida\n");
-
-    // Definir associações
-    Option.belongsTo(Poll);
-    Poll.hasMany(Option, { onDelete: "CASCADE" });
-    Vote.belongsTo(Option);
-    Option.hasMany(Vote, { onDelete: "CASCADE" });
 
     console.log("📊 Sincronizando tabelas...");
     await sequelize.sync({ force: false });
@@ -45,73 +40,71 @@ async function seedDatabase() {
     const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
     const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-    // Enquete 1: Em andamento
-    const poll1 = await Poll.create({
-      title: "🎨 Qual é sua linguagem de programação favorita?",
-      startDate: yesterday,
-      endDate: nextWeek,
-    });
-
-    try {
-      await Option.create({
-        text: "JavaScript / TypeScript",
-        PollId: poll1.id,
-      });
-      await Option.create({ text: "Python", PollId: poll1.id });
-      await Option.create({ text: "Java", PollId: poll1.id });
-      await Option.create({ text: "C / C++", PollId: poll1.id });
-    } catch (err) {
-      console.error("Erro ao criar opções para poll1:", err.message);
-    }
+    // Enquete 1: Finalizada
+    await Poll.create(
+      {
+        title: "📚 Qual é o melhor framework web?",
+        description: null,
+        startDate: new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000),
+        endDate: yesterday,
+        options: [
+          { text: "React", order: 0, votes: [{}, {}] },
+          { text: "Vue.js", order: 1, votes: [{}] },
+          { text: "Angular", order: 2, votes: [{}] },
+          { text: "Svelte", order: 3, votes: [] },
+        ],
+      },
+      {
+        include: {
+          model: Option,
+          include: Vote,
+        },
+      },
+    );
 
     // Enquete 2: Não iniciada
-    const poll2 = await Poll.create({
-      title: "💻 Qual sistema operacional você usa?",
-      startDate: tomorrow,
-      endDate: nextWeek,
-    });
+    await Poll.create(
+      {
+        title: "💻 Qual sistema operacional você usa?",
+        description: null,
+        startDate: tomorrow,
+        endDate: nextWeek,
+        options: [
+          { text: "Windows", order: 0, votes: [] },
+          { text: "macOS", order: 1, votes: [] },
+          { text: "Linux", order: 2, votes: [] },
+          { text: "Outro", order: 3, votes: [] },
+        ],
+      },
+      {
+        include: {
+          model: Option,
+          include: Vote,
+        },
+      },
+    );
 
-    try {
-      await Option.create({ text: "Windows", PollId: poll2.id });
-      await Option.create({ text: "macOS", PollId: poll2.id });
-      await Option.create({ text: "Linux", PollId: poll2.id });
-      await Option.create({ text: "Outro", PollId: poll2.id });
-    } catch (err) {
-      console.error("Erro ao criar opções para poll2:", err.message);
-    }
-
-    // Enquete 3: Finalizada
-    const poll3 = await Poll.create({
-      title: "📚 Qual é o melhor framework web?",
-      startDate: new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000),
-      endDate: yesterday,
-    });
-
-    let opt1, opt2, opt3, opt4;
-    try {
-      opt1 = await Option.create({ text: "React", PollId: poll3.id });
-      opt2 = await Option.create({ text: "Vue.js", PollId: poll3.id });
-      opt3 = await Option.create({ text: "Angular", PollId: poll3.id });
-      opt4 = await Option.create({ text: "Svelte", PollId: poll3.id });
-    } catch (err) {
-      console.error("Erro ao criar opções para poll3:", err.message);
-    }
-
-    // Adicionar alguns votos na enquete finalizada
-    if (opt1 && opt2 && opt3 && opt4) {
-      for (let i = 0; i < 10; i++) {
-        await Vote.create({ OptionId: opt1.id });
-      }
-      for (let i = 0; i < 7; i++) {
-        await Vote.create({ OptionId: opt2.id });
-      }
-      for (let i = 0; i < 5; i++) {
-        await Vote.create({ OptionId: opt3.id });
-      }
-      for (let i = 0; i < 3; i++) {
-        await Vote.create({ OptionId: opt4.id });
-      }
-    }
+    // Enquete 3: Em andamento
+    await Poll.create(
+      {
+        title: "🎨 Qual é sua linguagem de programação favorita?",
+        description: null,
+        startDate: yesterday,
+        endDate: nextWeek,
+        options: [
+          { text: "JavaScript / TypeScript", order: 0, votes: [] },
+          { text: "Python", order: 1, votes: [] },
+          { text: "Java", order: 2, votes: [] },
+          { text: "C / C++", order: 3, votes: [] },
+        ],
+      },
+      {
+        include: {
+          model: Option,
+          include: Vote,
+        },
+      },
+    );
 
     console.log("✓ Enquetes criadas com sucesso\n");
 

@@ -2,7 +2,7 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
 const Vote = sequelize.define(
-  "Vote",
+  "vote",
   {
     id: {
       type: DataTypes.INTEGER,
@@ -14,7 +14,7 @@ const Vote = sequelize.define(
     timestamps: false,
     charset: "utf8mb4",
     collate: "utf8mb4_unicode_ci",
-  }
+  },
 );
 
 module.exports = Vote;

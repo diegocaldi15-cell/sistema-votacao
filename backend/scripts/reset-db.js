@@ -10,10 +10,8 @@
 
 require("dotenv").config();
 const sequelize = require("../config/database");
-const Poll = require("../models/Poll");
-const Option = require("../models/Option");
-const Vote = require("../models/Vote");
 const readline = require("readline");
+const { initializeDatabaseAssociations } = require("../utils/database");
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -22,7 +20,7 @@ const rl = readline.createInterface({
 
 async function resetDatabase() {
   console.log(
-    "\n⚠️  AVISO: Este comando irá DELETAR TODOS os dados do banco!\n"
+    "\n⚠️  AVISO: Este comando irá DELETAR TODOS os dados do banco!\n",
   );
 
   // Pedir confirmação
@@ -44,10 +42,7 @@ async function resetDatabase() {
         console.log("✓ Conexão estabelecida\n");
 
         // Definir associações
-        Option.belongsTo(Poll);
-        Poll.hasMany(Option, { onDelete: "CASCADE" });
-        Vote.belongsTo(Option);
-        Option.hasMany(Vote, { onDelete: "CASCADE" });
+        initializeDatabaseAssociations();
 
         // Sincronizar com force: true (apaga e recria)
         console.log("🗑️  Removendo tabelas antigas...");
@@ -70,7 +65,7 @@ async function resetDatabase() {
         rl.close();
         process.exit(1);
       }
-    }
+    },
   );
 }
 

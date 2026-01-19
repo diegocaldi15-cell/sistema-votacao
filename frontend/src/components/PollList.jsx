@@ -105,19 +105,19 @@ function PollList({
         </button>
         <button
           className={`${styles.filterBtn} ${
-            filterStatus === "não-iniciada" ? styles.active : ""
-          }`}
-          onClick={() => setFilterStatus("não-iniciada")}
-        >
-          Não Iniciadas
-        </button>
-        <button
-          className={`${styles.filterBtn} ${
             filterStatus === "em-andamento" ? styles.active : ""
           }`}
           onClick={() => setFilterStatus("em-andamento")}
         >
           Em Andamento
+        </button>
+        <button
+          className={`${styles.filterBtn} ${
+            filterStatus === "não-iniciada" ? styles.active : ""
+          }`}
+          onClick={() => setFilterStatus("não-iniciada")}
+        >
+          Não Iniciadas
         </button>
         <button
           className={`${styles.filterBtn} ${
@@ -140,7 +140,7 @@ function PollList({
             <div
               key={poll.id}
               className={styles.pollCard}
-              onClick={() => onPollClick?.(poll.id)}
+              onClick={() => onPollClick?.(poll)}
             >
               <div className={styles.pollCardContent}>
                 <div className={styles.pollInfo}>
@@ -155,7 +155,7 @@ function PollList({
                   </div>
                   <div className={styles.optionsCount}>
                     <p>
-                      <strong>{poll.Options?.length || 0} opções</strong>
+                      <strong>{poll.options?.length || 0} opções</strong>
                     </p>
                   </div>
                 </div>
@@ -170,7 +170,7 @@ function PollList({
                   className={`${styles.actionBtn} ${styles.btnVote}`}
                   onClick={(e) => {
                     e.stopPropagation();
-                    onPollClick?.(poll.id);
+                    onPollClick?.(poll);
                   }}
                   disabled={getPollStatus(poll) !== "em-andamento"}
                 >
@@ -180,7 +180,7 @@ function PollList({
                   className={`${styles.actionBtn} ${styles.btnEdit}`}
                   onClick={(e) => {
                     e.stopPropagation();
-                    onEditPoll?.(poll.id);
+                    onEditPoll?.(poll);
                   }}
                 >
                   Editar

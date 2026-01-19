@@ -5,48 +5,56 @@ import PollList from "./components/PollList";
 import PollDetail from "./components/PollDetail";
 import PollForm from "./components/PollForm";
 import styles from "./styles/App.module.css";
+import { pollAPI } from "./utils/pollAPI";
 
 function App() {
-  const { polls, loading, error, loadPolls, handleDeletePoll } =
-    usePollsData();
-  const [selectedPollId, setSelectedPollId] = useState(null);
-  const [editingPollId, setEditingPollId] = useState(null);
+  const { polls, loading, error, loadPolls, handleDeletePoll } = usePollsData();
+  const [selectedPoll, setSelectedPoll] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [edit, toggleEdit] = useState(false);
 
   // Editar enquete
-  const handleEditPoll = (pollId) => {
-    setEditingPollId(pollId);
+  const handleEditPoll = (poll) => {
+    setSelectedPoll(poll);
+    toggleEdit(true);
     setShowForm(true);
   };
 
   // Criar nova enquete
   const handleCreatePoll = () => {
-    setEditingPollId(null);
+    toggleEdit(false);
     setShowForm(true);
   };
 
   // Clicar em enquete para votar
-  const handlePollClick = (pollId) => {
-    setSelectedPollId(pollId);
+  const handlePollClick = (poll) => {
+    setSelectedPoll(poll);
   };
 
   // Voltar da tela de detalhes
   const handleBackToPollList = () => {
-    setSelectedPollId(null);
-    loadPolls(); // Recarrega enquetes para atualizar votos
+    setSelectedPoll(null);
+    loadPolls();
   };
 
   // Sucesso ao salvar formulário
   const handleFormSuccess = () => {
+    setSelectedPoll(null);
     setShowForm(false);
-    setEditingPollId(null);
+    toggleEdit(false);
     loadPolls();
   };
 
   // Cancelar formulário
   const handleFormCancel = () => {
+    setSelectedPoll(null);
     setShowForm(false);
-    setEditingPollId(null);
+    toggleEdit(false);
+  };
+
+  // Atualiza os votos
+  const handleUpdatePoll = () => {
+    pollAPI.getById(selectedPoll.id).then((res) => setSelectedPoll(res.data));
   };
 
   if (loading) {
@@ -65,14 +73,16 @@ function App() {
 
       {showForm ? (
         <PollForm
-          pollId={editingPollId}
+          edit={edit}
+          poll={selectedPoll}
           onSuccess={handleFormSuccess}
           onCancel={handleFormCancel}
         />
-      ) : selectedPollId ? (
+      ) : selectedPoll ? (
         <PollDetail
-          pollId={selectedPollId}
+          poll={selectedPoll}
           onBack={handleBackToPollList}
+          onPollUpdate={handleUpdatePoll}
           socket={socket}
         />
       ) : (

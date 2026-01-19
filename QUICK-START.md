@@ -24,12 +24,16 @@ npm run setup:db
 # 5. Inicie o servidor
 npm start
 
-# 6. Em outro terminal, vá para frontend
+# 6. Configure .env no lado do Frontend, utilizando o caminho do servidor do backend
+VITE_API_URL=http://localhost:5000
+VITE_API_SOCKET_URL=http://localhost:5000
+
+# 7. Em outro terminal, vá para frontend
 cd frontend
 npm install
 npm run dev
 
-# 7. Abra http://localhost:5173
+# 8. Abra http://localhost:5173
 ```
 
 **Pronto! Sistema rodando com dados! 🎉**

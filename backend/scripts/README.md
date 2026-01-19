@@ -364,22 +364,18 @@ TABLE: polls (enquetes)
 ├── title (VARCHAR)
 ├── description (TEXT)
 ├── startDate (DATETIME)
-├── endDate (DATETIME)
-├── createdAt (DATETIME)
-└── updatedAt (DATETIME)
+└── endDate (DATETIME)
 
 TABLE: options (opções)
 ├── id (Primary Key)
 ├── text (VARCHAR)
-├── pollId (Foreign Key → polls.id)
-├── createdAt (DATETIME)
-└── updatedAt (DATETIME)
+├── order (INTENGER NOT NULL)
+└── pollId (Foreign Key → polls.id)
 
 TABLE: votes (votos)
 ├── id (Primary Key)
 ├── optionId (Foreign Key → options.id)
-├── createdAt (DATETIME)
-└── updatedAt (DATETIME)
+└── pollId (Foreign Key → polls.id)
 ```
 
 ---
@@ -392,7 +388,9 @@ Quando você roda `npm run seed:db`, são criadas enquetes em diferentes **estad
 
 ```
 NOT_STARTED:  Data início ainda não chegou → Você não pode votar
+
 ACTIVE:       Dentro do período → Você PODE votar
+
 FINISHED:     Data fim passou → Você não pode votar (mostra resultados)
 ```
 

@@ -1,100 +1,57 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState } from "react";
 import { pollAPI } from "../utils/pollAPI";
 import styles from "../styles/PollForm.module.css";
 
-function PollForm({ pollId, onSuccess, onCancel }) {
+function PollForm({ poll, edit, onSuccess, onCancel }) {
   const [formData, setFormData] = useState({
-    title: "",
-    startDate: "",
-    endDate: "",
-    options: ["", "", ""],
+    title: edit ? poll.title : "",
+    startDate: edit ? new Date(poll.startDate).toISOString().slice(0, 16) : "",
+    endDate: edit ? new Date(poll.endDate).toISOString().slice(0, 16) : "",
+    options: edit
+      ? poll.options.map((opt) => ({ id: opt.id, text: opt.text }))
+      : [{ text: "" }, { text: "" }, { text: "" }],
   });
-  const [loading, setLoading] = useState(!!pollId);
   const [error, setError] = useState(null);
-  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [draggedIndex, setDraggedIndex] = useState(null);
 
-  // Formata data para input type="datetime-local"
-  const formatDateInput = useCallback((dateString) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
-  }, []);
-
-  // Carregar dados da enquete se for edição
-  useEffect(() => {
-    const controller = new AbortController();
-
-    if (pollId) {
-      pollAPI
-        .getById(pollId)
-        .then((res) => {
-          const poll = res.data;
-          setFormData({
-            title: poll.title,
-            startDate: formatDateInput(poll.startDate),
-            endDate: formatDateInput(poll.endDate),
-            options: poll.Options.map((opt) => opt.text),
-          });
-          setLoading(false);
-        })
-        .catch((err) => {
-          if (err.name !== "CanceledError") {
-            console.error("Erro ao carregar enquete:", err);
-            setError("Erro ao carregar enquete para edição");
-            setLoading(false);
-          }
-        });
-    }
-
-    return () => {
-      controller.abort();
-    };
-  }, [pollId, formatDateInput]);
-
-  // Manipula mudanças no formulário
+  // Inputs Simples
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-    if (error) setError(null);
   };
 
-  // Manipula mudanças nas opções
+  // Opções
   const handleOptionChange = (index, value) => {
-    const newOptions = [...formData.options];
-    newOptions[index] = value;
-    setFormData((prev) => ({
-      ...prev,
-      options: newOptions,
-    }));
-    if (error) setError(null);
+    setFormData((prev) => {
+      const options = [...prev.options];
+      options[index] = { ...options[index], text: value };
+      return { ...prev, options };
+    });
   };
 
   // Adiciona nova opção
   const addOption = () => {
     setFormData((prev) => ({
       ...prev,
-      options: [...prev.options, ""],
+      options: [...prev.options, { text: "" }],
     }));
   };
 
   // Remove opção
   const removeOption = (index) => {
-    if (formData.options.length > 3) {
-      setFormData((prev) => ({
-        ...prev,
-        options: prev.options.filter((_, i) => i !== index),
-      }));
-    } else {
+    if (formData.options.length <= 3) {
       setError("Mínimo de 3 opções é obrigatório");
+      return;
     }
+
+    setFormData((prev) => ({
+      ...prev,
+      options: prev.options.filter((_, i) => i !== index),
+    }));
   };
 
   // Drag and Drop
@@ -117,9 +74,14 @@ function PollForm({ pollId, onSuccess, onCancel }) {
     // Insere na nova posição
     newOptions.splice(targetIndex, 0, draggedItem);
 
+    const newOrderedOptions = newOptions.map((opt, order) => ({
+      ...opt,
+      order,
+    }));
+
     setFormData((prev) => ({
       ...prev,
-      options: newOptions,
+      options: newOrderedOptions,
     }));
     setDraggedIndex(null);
   };
@@ -146,8 +108,7 @@ function PollForm({ pollId, onSuccess, onCancel }) {
       setError("Mínimo de 3 opções é obrigatório");
       return false;
     }
-    const emptyOptions = formData.options.filter((opt) => !opt.trim());
-    if (emptyOptions.length > 0) {
+    if (formData.options.some((opt) => !opt.text.trim())) {
       setError("Todas as opções devem ser preenchidas");
       return false;
     }
@@ -160,45 +121,27 @@ function PollForm({ pollId, onSuccess, onCancel }) {
     setError(null);
 
     if (!validateForm()) return;
+    setLoading(true);
 
-    setSubmitted(true);
+    console.log(formData);
 
-    const payload = {
-      title: formData.title,
-      startDate: new Date(formData.startDate).toISOString(),
-      endDate: new Date(formData.endDate).toISOString(),
-      options: formData.options,
-    };
-
-    let request;
-    if (pollId) {
-      // Editar enquete
-      request = pollAPI.update(pollId, payload);
-    } else {
-      // Criar nova enquete
-      request = pollAPI.create(payload);
-    }
+    const request = poll
+      ? pollAPI.update(poll.id, formData)
+      : pollAPI.create(formData);
 
     request
       .then(() => {
         console.log("Enquete salva com sucesso!");
-        setSubmitted(false);
         onSuccess?.();
       })
       .catch((err) => {
         console.error("Erro ao salvar enquete:", err);
         setError(err.response?.data?.message || "Erro ao salvar enquete");
-        setSubmitted(false);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
-
-  if (loading) {
-    return (
-      <div className={styles.container}>
-        <p>Carregando formulário...</p>
-      </div>
-    );
-  }
 
   return (
     <div className={styles.container}>
@@ -207,7 +150,7 @@ function PollForm({ pollId, onSuccess, onCancel }) {
       </button>
 
       <form className={styles.formCard} onSubmit={handleSubmit}>
-        <h2>{pollId ? "Editar Enquete" : "Nova Enquete"}</h2>
+        <h2>{edit ? "Editar Enquete" : "Nova Enquete"}</h2>
 
         {error && <p className={styles.error}>{error}</p>}
 
@@ -221,7 +164,7 @@ function PollForm({ pollId, onSuccess, onCancel }) {
             value={formData.title}
             onChange={handleInputChange}
             placeholder="Ex: Qual é sua linguagem favorita?"
-            disabled={submitted}
+            disabled={loading}
           />
         </div>
 
@@ -235,7 +178,7 @@ function PollForm({ pollId, onSuccess, onCancel }) {
               name="startDate"
               value={formData.startDate}
               onChange={handleInputChange}
-              disabled={submitted}
+              disabled={loading}
             />
           </div>
 
@@ -247,7 +190,7 @@ function PollForm({ pollId, onSuccess, onCancel }) {
               name="endDate"
               value={formData.endDate}
               onChange={handleInputChange}
-              disabled={submitted}
+              disabled={loading}
             />
           </div>
         </div>
@@ -262,7 +205,7 @@ function PollForm({ pollId, onSuccess, onCancel }) {
           </div>
 
           <div className={styles.optionsList}>
-            {formData.options.map((option, index) => (
+            {formData.options.map((opt, index) => (
               <div
                 key={index}
                 className={`${styles.optionInputGroup} ${
@@ -276,17 +219,17 @@ function PollForm({ pollId, onSuccess, onCancel }) {
                 <div className={styles.dragHandle}>⋮⋮</div>
                 <input
                   type="text"
-                  value={option}
+                  value={opt.text}
                   onChange={(e) => handleOptionChange(index, e.target.value)}
                   placeholder={`Opção ${index + 1}`}
-                  disabled={submitted}
+                  disabled={loading}
                 />
                 {formData.options.length > 3 && (
                   <button
                     type="button"
                     className={styles.btnRemoveOption}
                     onClick={() => removeOption(index)}
-                    disabled={submitted}
+                    disabled={loading}
                   >
                     ✕
                   </button>
@@ -299,7 +242,7 @@ function PollForm({ pollId, onSuccess, onCancel }) {
             type="button"
             className={styles.btnAddOption}
             onClick={addOption}
-            disabled={submitted}
+            disabled={loading}
           >
             + Adicionar Opção
           </button>
@@ -311,16 +254,12 @@ function PollForm({ pollId, onSuccess, onCancel }) {
             type="button"
             className={styles.btnCancel}
             onClick={onCancel}
-            disabled={submitted}
+            disabled={loading}
           >
             Cancelar
           </button>
-          <button
-            type="submit"
-            className={styles.btnSubmit}
-            disabled={submitted}
-          >
-            {submitted ? "Salvando..." : pollId ? "Atualizar" : "Criar"}
+          <button type="submit" className={styles.btnSubmit} disabled={loading}>
+            {loading ? "Salvando..." : edit ? "Atualizar" : "Criar"}
           </button>
         </div>
       </form>

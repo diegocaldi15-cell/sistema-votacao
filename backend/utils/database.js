@@ -1,5 +1,20 @@
 const mysql = require("mysql2/promise");
 const sequelize = require("../config/database");
+const Poll = require("../models/Poll");
+const Option = require("../models/Option");
+const Vote = require("../models/Vote");
+
+function initializeDatabaseAssociations() {
+  const Options = Poll.hasMany(Option, { onDelete: "CASCADE" });
+  const Votes = Poll.hasMany(Vote, { onDelete: "CASCADE" });
+  Option.belongsTo(Poll);
+  Vote.belongsTo(Poll);
+  Vote.belongsTo(Option);
+  return {
+    Votes,
+    Options,
+  };
+}
 
 async function initializeDatabaseIfNeeded() {
   try {
@@ -16,7 +31,7 @@ async function initializeDatabaseIfNeeded() {
     // Criar banco de dados se não existir
     try {
       await connection.query(
-        `CREATE DATABASE IF NOT EXISTS \`${dbName}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`
+        `CREATE DATABASE IF NOT EXISTS \`${dbName}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci`,
       );
     } catch (err) {
       if (err.code !== "ER_DB_CREATE_EXISTS") {
@@ -36,10 +51,10 @@ async function initializeDatabaseIfNeeded() {
   } catch (err) {
     console.error("⚠️  Erro ao inicializar banco de dados:", err.message);
     console.error(
-      "Dica: Execute 'npm run setup:db' para configurar automaticamente"
+      "Dica: Execute 'npm run setup:db' para configurar automaticamente",
     );
     process.exit(1);
   }
 }
 
-module.exports = { initializeDatabaseIfNeeded };
+module.exports = { initializeDatabaseIfNeeded, initializeDatabaseAssociations };
