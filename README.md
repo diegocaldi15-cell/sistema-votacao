@@ -866,10 +866,10 @@ Quando você executa `npm run seed:db`, são criadas:
 
 **Qual é o melhor framework web?**
 
-- React (10 votos)
-- Vue.js (7 votos)
-- Angular (5 votos)
-- Svelte (3 votos)
+- React (2 votos)
+- Vue.js (1 votos)
+- Angular (1 votos)
+- Svelte (0 votos)
 
 ---
 
