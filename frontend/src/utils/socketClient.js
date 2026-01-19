@@ -5,6 +5,7 @@ const SOCKET_URL =
 
 export const socket = io(SOCKET_URL);
 
+// Listeners para eventos de WebSocket relacionados a enquetes
 export const socketListeners = {
   setupPollsUpdatedListener: (callback) => {
     socket.off("pollsUpdated");

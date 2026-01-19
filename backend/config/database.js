@@ -1,6 +1,7 @@
 const { Sequelize } = require("sequelize");
 require("dotenv").config();
 
+// Inicializa a conexão com o banco de dados MySQL usando Sequelize
 const sequelize = new Sequelize(
   process.env.DB_NAME,
   process.env.DB_USER,
@@ -15,7 +16,7 @@ const sequelize = new Sequelize(
     dialectOptions: {
       charset: "utf8mb4",
     },
-  }
+  },
 );
 
 module.exports = sequelize;

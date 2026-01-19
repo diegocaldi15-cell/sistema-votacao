@@ -138,7 +138,7 @@ Se der problema:
 
 ## 🚀 Próximos Passos
 
-1. **Ler SETUP.md** - Para instrições detalhadas
+1. **Ler SETUP.md** - Para instruções detalhadas
 2. **Executar `npm run setup:db`** - Para configurar tudo
 3. **Iniciar `npm start`** - Para rodar servidor
 4. **Iniciar `npm run dev` (frontend)** - Para interface

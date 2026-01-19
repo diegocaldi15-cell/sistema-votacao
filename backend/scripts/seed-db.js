@@ -12,6 +12,7 @@ const Poll = require("../models/Poll");
 const Option = require("../models/Option");
 const Vote = require("../models/Vote");
 
+// Função principal para popular o banco de dados
 async function seedDatabase() {
   console.log("🌱 Populando banco de dados com dados de teste...\n");
 

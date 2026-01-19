@@ -2,20 +2,20 @@ import React, { useEffect, useState } from "react";
 import { pollAPI } from "../utils/pollAPI";
 import styles from "../styles/PollDetail.module.css";
 
+// Componente de Detalhes da Enquete
 function PollDetail({ poll, onBack, onPollUpdate, socket }) {
   const [error, setError] = useState(null);
   const [pendingVote, setPendingVote] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
+  // Configura listener para atualizações de votos via WebSocket
   useEffect(() => {
-    // Carregar detalhes da enquete e resultados
     socket.off("updateVotes", onPollUpdate);
     socket.on("updateVotes", onPollUpdate);
     return () => socket.off("updateVotes", onPollUpdate);
   }, [socket, onPollUpdate]);
 
   const handleVote = (optionId) => {
-    // Armazena o voto pendente e mostra confirmação
     setPendingVote(optionId);
     setShowConfirmation(true);
   };
@@ -26,7 +26,6 @@ function PollDetail({ poll, onBack, onPollUpdate, socket }) {
     pollAPI
       .vote(poll.id, pendingVote)
       .then(() => {
-        // Recarrega resultados
         setError(null);
         setShowConfirmation(false);
         setPendingVote(null);
@@ -65,6 +64,7 @@ function PollDetail({ poll, onBack, onPollUpdate, socket }) {
 
   const isActive = getPollStatus() === "em-andamento";
 
+  // Renderiza os detalhes da enquete
   return (
     <div className={styles.container}>
       <button className={styles.btnBack} onClick={onBack}>

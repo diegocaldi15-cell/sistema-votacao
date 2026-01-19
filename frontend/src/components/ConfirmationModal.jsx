@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "../styles/ConfirmationModal.module.css";
 
+// Componente de Modal de Confirmação
 function ConfirmationModal({
   title,
   message,
@@ -11,6 +12,7 @@ function ConfirmationModal({
   isLoading = false,
   isDanger = false,
 }) {
+  // Renderiza o modal de confirmação
   return (
     <div className={styles.confirmationOverlay}>
       <div className={styles.confirmationModal}>

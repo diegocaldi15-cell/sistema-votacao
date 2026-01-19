@@ -29,7 +29,7 @@ async function initializeDatabase() {
     try {
       await connection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\``);
       console.log(
-        `✓ Banco de dados '${dbName}' criado/verificado com sucesso\n`
+        `✓ Banco de dados '${dbName}' criado/verificado com sucesso\n`,
       );
     } catch (err) {
       if (err.code !== "ER_DB_CREATE_EXISTS") {
@@ -66,7 +66,7 @@ async function initializeDatabase() {
     console.error("❌ Erro ao inicializar o banco de dados:");
     console.error(err.message);
     console.error(
-      "\nDica: Verifique as variáveis de ambiente no arquivo .env\n"
+      "\nDica: Verifique as variáveis de ambiente no arquivo .env\n",
     );
     process.exit(1);
   }

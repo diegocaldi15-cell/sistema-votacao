@@ -2,6 +2,7 @@ import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
+// API para interagir com o backend de enquetes
 export const pollAPI = {
   getAll: () => axios.get(`${API_URL}/api/polls`),
 

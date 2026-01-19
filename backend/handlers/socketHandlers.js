@@ -1,6 +1,7 @@
 const Poll = require("../models/Poll");
 const Option = require("../models/Option");
 
+// Configura os manipuladores de eventos do Socket.io
 module.exports = function setupSocketHandlers(io) {
   io.on("connection", (socket) => {
     console.log("Usuário conectado:", socket.id);

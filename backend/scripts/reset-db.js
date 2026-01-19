@@ -18,6 +18,7 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
+// Função principal para resetar o banco de dados
 async function resetDatabase() {
   console.log(
     "\n⚠️  AVISO: Este comando irá DELETAR TODOS os dados do banco!\n",

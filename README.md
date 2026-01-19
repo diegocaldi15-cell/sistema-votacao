@@ -684,7 +684,7 @@ curl -X GET http://localhost:5000/api/polls/1/results
 ```javascript
 {
   id: Integer (Primary Key),
-  pollId: Integer (FOreign Key),
+  pollId: Integer (Foreign Key),
   optionId: Integer (Foreign Key)
 }
 ```

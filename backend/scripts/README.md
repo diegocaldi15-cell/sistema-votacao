@@ -156,10 +156,10 @@ node scripts/seed-db.js
 
 **Enquete 3:** "Qual é o melhor framework web?" (Finalizada)
 
-- React (10 votos) ✓
-- Vue.js (7 votos) ✓
-- Angular (5 votos) ✓
-- Svelte (3 votos) ✓
+- React (2 votos) ✓
+- Vue.js (1 votos) ✓
+- Angular (1 votos) ✓
+- Svelte (0 votos) ✓
 
 **Quando usar:**
 
@@ -514,7 +514,7 @@ R: Sim! Edite `backend/scripts/seed-db.js` e customize as enquetes/opções.
 **P: Como adiciono mais dados sem resetar?**  
 R: Crie um novo script baseado em `seed-db.js` e execute separadamente.
 
-**P: Perdí meus dados, como recupero?**  
+**P: Perdi meus dados, como recupero?**  
 R: Infelizmente, após `reset:db` é irreversível. Sempre mantenha backups!
 
 **P: Como faço backup do banco?**  

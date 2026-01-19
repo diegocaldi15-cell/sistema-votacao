@@ -7,6 +7,7 @@ import PollForm from "./components/PollForm";
 import styles from "./styles/App.module.css";
 import { pollAPI } from "./utils/pollAPI";
 
+// Componente Principal da Aplicação
 function App() {
   const { polls, loading, error, loadPolls, handleDeletePoll } = usePollsData();
   const [selectedPoll, setSelectedPoll] = useState(null);
@@ -66,6 +67,7 @@ function App() {
     );
   }
 
+  // Renderiza o componente principal
   return (
     <div className={styles.container}>
       <h1>Sistema de Votação</h1>

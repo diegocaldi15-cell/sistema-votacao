@@ -13,6 +13,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, { cors: { origin: "*" } });
 
+// Função principal para iniciar o servidor
 async function bootstrap() {
   app.use(cors());
   app.use(express.json({ charset: "utf-8" }));

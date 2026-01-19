@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styles from "../styles/PollList.module.css";
 import ConfirmationModal from "./ConfirmationModal";
 
+// Componente de Lista de Enquetes
 function PollList({
   polls,
   onPollClick,
@@ -84,6 +85,7 @@ function PollList({
     setPollToDelete(null);
   };
 
+  // Renderiza a lista de enquetes
   return (
     <div className={styles.pollListContainer}>
       <div className={styles.header}>

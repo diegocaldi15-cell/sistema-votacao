@@ -1,17 +1,12 @@
 require("dotenv").config();
 const sequelize = require("../config/database");
+require("../models");
 const Poll = require("../models/Poll");
 const Option = require("../models/Option");
-const Vote = require("../models/Vote");
 
+// Função para verificar a conexão e listar enquetes
 async function checkDatabase() {
   try {
-    // Definir associações
-    Option.belongsTo(Poll);
-    Poll.hasMany(Option, { onDelete: "CASCADE" });
-    Vote.belongsTo(Option);
-    Option.hasMany(Vote, { onDelete: "CASCADE" });
-
     // Autenticar
     await sequelize.authenticate();
     console.log("✓ Conexão estabelecida\n");

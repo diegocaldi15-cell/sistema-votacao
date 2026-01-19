@@ -1,6 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
+// Define o modelo Poll
 const Poll = sequelize.define(
   "poll",
   {

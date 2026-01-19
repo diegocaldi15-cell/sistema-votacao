@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { pollAPI } from "../utils/pollAPI";
 import { socketListeners } from "../utils/socketClient";
 
+// Hook personalizado para gerenciar dados de enquetes
 export const usePollsData = () => {
   const [polls, setPolls] = useState([]);
   const [loading, setLoading] = useState(true);

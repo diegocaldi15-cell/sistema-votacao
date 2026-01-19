@@ -5,6 +5,7 @@ const Option = require("../models/Option");
 const Vote = require("../models/Vote");
 const { Sequelize } = require("sequelize");
 
+// Define o roteador de enquetes
 const app = express.Router();
 
 // GET todas as enquetes
@@ -30,7 +31,7 @@ app.post("/", async (req, res) => {
   try {
     const { title, startDate, endDate, options } = req.body;
 
-    // Validações básicas
+    // Validações
     if (!title || !startDate || !endDate || !options || options.length < 3) {
       return res.status(400).json({
         message: "O corpo da requisição está incorreto",
@@ -41,6 +42,7 @@ app.post("/", async (req, res) => {
         .status(400)
         .json({ message: "Data de início deve ser anterior à de término" });
     }
+
     // Cria poll
     const poll = await Poll.create(
       {
@@ -54,6 +56,7 @@ app.post("/", async (req, res) => {
       },
     );
 
+    // Busca a poll criada com as opções incluídas
     const pollWithOptions = await Poll.findByPk(poll.id, {
       include: Option,
     });
@@ -78,6 +81,7 @@ app.get("/:id", async (req, res) => {
       order: [[Option, "order", "ASC"]],
     });
 
+    // Verifica se a enquete existe
     if (!poll) {
       return res.status(404).json({ message: "Enquete não encontrada" });
     }
@@ -89,12 +93,12 @@ app.get("/:id", async (req, res) => {
   }
 });
 
-// PUT (atualizar) uma enquete
+//  PUT para atualizar uma enquete
 app.put("/:id", async (req, res) => {
   const { id } = req.params;
   let { title, startDate, endDate, options } = req.body;
 
-  // Validações
+  // Busca a enquete existente e valida
   const poll = await Poll.findByPk(id, { include: Option });
 
   if (!poll) {
@@ -118,7 +122,7 @@ app.put("/:id", async (req, res) => {
   const trx = await sequelize.transaction();
 
   try {
-    // Atualiza opções se fornecidas e forem válidas
+    // Atualiza opções
     if (options && Array.isArray(options) && options.length >= 3) {
       const removableOptions = poll.options.filter((opt) => {
         const hasOption = options.some((o) => o.id === opt.id);
@@ -229,6 +233,7 @@ app.get("/:id/results", async (req, res) => {
       return res.status(404).json({ message: "Enquete não encontrada" });
     }
 
+    // Busca resultados agregados
     const results = await Option.findAll({
       where: { pollId: id },
       attributes: [

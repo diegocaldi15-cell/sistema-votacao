@@ -4,6 +4,7 @@ const Poll = require("../models/Poll");
 const Option = require("../models/Option");
 const Vote = require("../models/Vote");
 
+// Definir associações entre modelos
 function initializeDatabaseAssociations() {
   const Options = Poll.hasMany(Option, { onDelete: "CASCADE" });
   const Votes = Poll.hasMany(Vote, { onDelete: "CASCADE" });
@@ -16,6 +17,7 @@ function initializeDatabaseAssociations() {
   };
 }
 
+// Inicializa o banco de dados se necessário
 async function initializeDatabaseIfNeeded() {
   try {
     // Tentar conectar ao MySQL

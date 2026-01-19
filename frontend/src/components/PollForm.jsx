@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { pollAPI } from "../utils/pollAPI";
 import styles from "../styles/PollForm.module.css";
 
+// Componente de Formulário de Enquete
 function PollForm({ poll, edit, onSuccess, onCancel }) {
   const [formData, setFormData] = useState({
     title: edit ? poll.title : "",
@@ -78,6 +79,7 @@ function PollForm({ poll, edit, onSuccess, onCancel }) {
     e.preventDefault();
   };
 
+  // Move opção na lista
   const moveOption = (from, to) => {
     if (to < 0 || to >= formData.options.length) return;
 
@@ -99,6 +101,7 @@ function PollForm({ poll, edit, onSuccess, onCancel }) {
     }));
   };
 
+  // Finaliza drag
   const handleDrop = (targetIndex) => {
     if (isMobile) return;
     if (draggedIndex === null || draggedIndex === targetIndex) return;
@@ -164,6 +167,7 @@ function PollForm({ poll, edit, onSuccess, onCancel }) {
       });
   };
 
+  // Renderiza o formulário
   return (
     <div className={styles.container}>
       <button className={styles.btnBack} onClick={onCancel}>
